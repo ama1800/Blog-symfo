@@ -1,0 +1,7 @@
+
+<div class="sidebar">
+  <a class="active" href="#home">Home</a>
+  {% for cat in activeCategories %}
+  <a href="{{ path('homePage', {cat: cat.id})}}" style="background-color: {{ cat.color}};">{{cat.name}}</a>
+  {% endfor %}
+</div>

@@ -1,0 +1,31 @@
+{% if pages > 1 %}
+<nav id="pagination" class="my-2" style="height:150px">
+  <ul class="pagination justify-content-center">
+    <li class="page-item">
+      {% if currentPage > 1 %}
+      <a class="page-link" href="{{ path(path, {page: currentPage - 1, q: q, cat: cat})}}" tabindex="-1">Précedent</a>
+      {% else %}
+      <a class="page-link disabled">Précedent</a>
+      {% endif %}
+    </li>
+    {% for page in 1..pages %}
+    {% if page == currentPage %}
+    <li id="" class="page-item active" page-id="{{ page }}" >
+      <a class="page-link">{{ currentPage }} </a>
+    </li>
+      {% else %}
+    <li id="page-{{ page }}" class="page-item" page-id="{{ page }}" >
+      <a class="page-link" href="{{ path(path, {page: page, q: q, cat: cat})}}">{{ page }}</a>
+    </li>
+      {% endif %}
+    {% endfor %}
+    <li class="page-item">
+      {% if currentPage < pages %}
+      <a class="page-link" href="{{ path(path, {page: currentPage + 1, q: q, cat: cat})}}" tabindex="-1">Suivant</a>
+      {% else %}
+      <a class="page-link disabled">Suivant</a>
+      {% endif %}
+    </li>
+  </ul>
+</nav>
+{% endif %}

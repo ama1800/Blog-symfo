@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home Page{% endblock %}
+
+{% block content %}
+    {% include "layout/articlesLayout.html.twig" %}
+            {% set path = 'homePage' %}
+            {% set pages = articles.pages %}
+            {% set q = articles.q %}
+            {% set cat = articles.cat %}
+            {% set currentPage = articles.page %}
+            {% include '/_partials/_pagination.html.twig' %}
+{% endblock %}
