@@ -49,12 +49,13 @@ class ArticleRepository extends ServiceEntityRepository
      *
      * @return Article[]
      */
-    public function findSearch(SearchData $search, int $limit = 10): array
+    public function findSearch(SearchData $search, int $limit = 5): array
     {
         $query = $this
             ->findActiveArticleQuery()
-            ->select('u', 'a')
+            ->select('a', 'u', 'c')
             ->join('a.author', 'u')
+            ->join('a.category', 'c')
             ->setMaxResults($limit)
             ->setFirstResult(($search->getPage() * $limit) - $limit);
 
@@ -77,9 +78,9 @@ class ArticleRepository extends ServiceEntityRepository
         }
         if (!empty($search->getCat())) {
             $query = $query
-            ->innerJoin('a.category', 'c')
             ->andWhere('c.id = :id')
-            ->setParameter('id', "%{$search->getCat()}%");
+            ->setParameter('id', $search->getCat());
+            // dd($query);
         }
         // Pagination
         $paginator = new Paginator($query);

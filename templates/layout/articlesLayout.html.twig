@@ -1,45 +1,43 @@
-<div class="container col-12 px-3" style="width: calc(100% - 200px);margin-right: 0 !important">
-{% for article in articles.data %}
-<div class="col-4">
-	<div class="item-box-blog">
-		<div
-			class="item-box-blog-image">
-			<!--Date-->
-			<div class="item-box-blog-date bg-blue-ui white">
-				<span class="mon">Publier Le : {{ article.createdAt | date('d/m/Y à H:i') }}</span><br>
-				{% if not article.createdAt is same as(article.updaedAt )  %}
-				<span class="mon">Mise à jour : {{ article.updaedAt | date('d/m/Y à H:i') }}</span><br>
-				{% endif %}
-				<span class="mon">Categorie : {{ article.category.name }}</span><br>
-			</div>
-			<!--Image-->
-			<figure>
-				<img alt="{{article.title}}" src="{{ asset('/uploads/' ~ article.featuredImage) }}" width="100px">
-			</figure>
-		</div>
-		<div
-			class="item-box-blog-body">
-			<!--Heading-->
-			<div class="item-box-blog-heading">
-				<a href="{{ path('app_article_show', {slug: article.slug })}}" tabindex="0">
-					<h5>{{article.title}}</h5>
-				</a>
-			</div>
-			<!--Data-->
-			<div class="item-box-blog-data" style="padding: px 15px;">
-        <p>{{ article.featuredText[:50] ~ '...'  }}</p>
-				<p>
-					<i class="fa fa-user-o"></i>
-					{{article.author.username}},
-					<i class="fa fa-comments-o"></i>
-					Commentaires({{ article.comments|length }})</p>
-			</div>
-			<div class="mt">
-				<a href="#" tabindex="0" class="btn bg-blue-ui white read">read more</a>
-			</div>
-			<!--Read More Button-->
-		</div>
+<div class="container">
+	<div class="row">
+			{% for article in articles.data %}
+				<div class="col-sm-6">
+					<div class="item-box-blog">
+						<div class="item-box-blog-image">
+							<div class="item-box-blog-date bg-blue-ui white">
+								<span class="mon">Publier Le :
+									{{ article.createdAt | date('d/m/Y à H:i') }}</span><br>
+								{% if not article.createdAt is same as(article.updaedAt )  %}
+									<span class="mon">Mise à jour :
+										{{ article.updaedAt | date('d/m/Y à H:i') }}</span><br>
+								{% endif %}
+								<span class="mon">Categorie :
+									{{ article.category.name }}</span><br>
+							</div>
+							<figure>
+								<img alt="{{article.title}}" src="{{ asset('/uploads/' ~ article.featuredImage) }}" width="100px">
+							</figure>
+						</div>
+						<div class="item-box-blog-body">
+							<div class="item-box-blog-heading">
+								<a href="{{ path('app_article_show', {slug: article.slug })}}" tabindex="0">
+									<h5>{{article.title}}</h5>
+								</a>
+							</div>
+							<div class="item-box-blog-data" style="padding: px 15px;">
+								<p>{{ article.featuredText[:50] ~ '...'  }}</p>
+								<p>
+									<i class="fa fa-user-o"></i>
+									{{article.author.username}},
+									<i class="fa fa-comments-o"></i>
+									Commentaires({{ article.comments|length }})</p>
+							</div>
+							<div class="mt">
+								<a href="#" tabindex="0" class="btn bg-blue-ui white read">read more</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
 	</div>
-</div>
-{% endfor %}
 </div>

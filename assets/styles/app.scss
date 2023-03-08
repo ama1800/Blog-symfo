@@ -1,4 +1,9 @@
 @import "~bootstrap/scss/bootstrap";
+*{
+    box-sizing: border-box;
+}
 body {
     background-color: lightgray;
+    margin: 0;
+    padding: 0;
 }

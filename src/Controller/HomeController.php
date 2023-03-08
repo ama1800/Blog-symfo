@@ -19,6 +19,7 @@ class HomeController extends AbstractController
         $data = new SearchData();
 
         $data->setPage($request->get('page', 1));
+        $data->setCat($request->get('cat', ''));
         
         $categories = $categoryRepository->findAll();
         foreach ($categories as $category) {

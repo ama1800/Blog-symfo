@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use function Symfony\Component\String\u;
 
 #[IsGranted('ROLE_USER')]
 #[Route('/article')]
@@ -24,19 +26,33 @@ class ArticleController extends AbstractController
     }
     #[IsGranted('ROLE_AUTHOR')]
     #[Route('/new', name: 'app_article_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, ArticleRepository $articleRepository): Response
+    public function new(Request $request, ArticleRepository $articleRepository, SluggerInterface $sluggerInterface): Response
     {
         $article = new Article();
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $image = $form->get('featuredImage')->getData();
+            $article
+            ->setSlug($sluggerInterface->slug(u($article->getTitle())))
+            ->setAuthor($this->getUser())
+            ->setFeaturedText(substr($article->getContent(), 0, 200))
+            ;
+            if ($image) {
+                $fichier = md5(uniqid()) . '-' . $article->getSlug() . '.' . $image->guessExtension();
+                $image->move(
+                    $this->getParameter('medias_directory'),
+                    $fichier
+                );
+                $article->setFeaturedImage($fichier);
+            }
             $articleRepository->save($article, true);
 
             return $this->redirectToRoute('app_article_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('article/new.html.twig', [
+        return $this->render('article/new.html.twig', [
             'article' => $article,
             'form' => $form,
         ]);
@@ -51,18 +67,20 @@ class ArticleController extends AbstractController
     }
     #[IsGranted('ROLE_AUTHOR')]
     #[Route('/{id}/edit', name: 'app_article_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Article $article, ArticleRepository $articleRepository): Response
+    public function edit(Request $request, Article $article, ArticleRepository $articleRepository, SluggerInterface $sluggerInterface): Response
     {
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $article
+            ->setSlug($sluggerInterface->slug(u($article->getTitle())));
             $articleRepository->save($article, true);
 
             return $this->redirectToRoute('app_article_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('article/edit.html.twig', [
+        return $this->render('article/edit.html.twig', [
             'article' => $article,
             'form' => $form,
         ]);

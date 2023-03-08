@@ -2,12 +2,18 @@
 
 namespace App\Entity;
 
-use App\Repository\ArticleRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\PreUpdate;
+use Doctrine\ORM\Mapping\PrePersist;
+use App\Repository\ArticleRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
+
+#[HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 class Article
 {
@@ -40,6 +46,12 @@ class Article
     private ?\DateTimeImmutable $updaedAt = null;
 
     #[ORM\Column]
+    #[Assert\Choice(choices: [
+        self::STATUS_ACTIVE,
+        self::STATUS_INACTIVE,
+        self::STATUS_DRAFT,
+        self::STATUS_DISABLED
+    ])]
     private ?int $status = null;
 
     #[ORM\Column(length: 255)]
@@ -60,6 +72,20 @@ class Article
     {
         $this->comments = new ArrayCollection();
     }
+    
+    #[PrePersist]
+    public function prepesist()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updaedAt = new \DateTimeImmutable();
+    }
+
+    #[PreUpdate]
+    public function prepUp()
+    {
+        $this->updaedAt = new \DateTimeImmutable();
+    }
+
 
     public function getId(): ?int
     {
@@ -153,7 +179,7 @@ class Article
         ];
 
         if (!in_array($status, $allowedStatus)) {
-            throw new \InvalidArgumentException('Invalid status');
+            throw new \InvalidArgumentException('Invalide status!');
         }
 
         $this->status = $status;
